@@ -3,6 +3,8 @@
 name: Auto UPDATE CNIP LIST
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
+  schedule:
+    - cron: '* * 12,23 * *'
   push:
     branches: [master]
   pull_request:
@@ -26,6 +28,7 @@ jobs:
           git config --global user.name "yume233"
       - name: 推送
         run: |
+          curl -s https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt |sed -e 's/^/add address=/g' -e 's/$/ list=CNIP/g'|sed -e $'1i\\\n/ip firewall address-list' -e $'1i\\\nremove [/ip firewall address-list find list=CNIP]' -e $'1i\\\nadd address=10.0.0.0/24 list=CNIP comment=private-network'>cnip.rsc
           git add . && git commit -m "🚀 ${{ steps.date.outputs.today }}" && git push -u;
           echo ' 更新成功！'; \
           echo "---------- MAIN ----------"
